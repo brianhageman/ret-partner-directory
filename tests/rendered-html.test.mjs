@@ -50,8 +50,9 @@ test("keeps starter preview artifacts out of the finished app", async () => {
   assert.match(page, /RET relevance tags/);
   assert.match(page, /Generate outreach email/);
   assert.match(page, /SHEET_CSV_URL/);
+  assert.match(page, /connects naturally to/);
   assert.match(layout, /RET Industry Partner Directory/);
-  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview/);
+  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));

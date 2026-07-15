@@ -798,26 +798,73 @@ function matchedIdeas(partner: Partner, subject: Subject) {
     .slice(0, 4);
 }
 
+function readableList(items: string[]) {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+}
+
+function classroomFrame(subject: Subject) {
+  const frames: Record<Subject, string> = {
+    Physics:
+      "forces, energy, light, sensors, measurement, and the tools engineers use to study physical systems",
+    Chemistry:
+      "materials, chemical testing, product formulation, quality control, and the way substances are designed or measured",
+    "Physical Science":
+      "matter, energy, materials, measurement, and the engineering decisions behind real products and processes",
+    Biology:
+      "living systems, biotechnology, health applications, lab methods, and the way research moves into real-world tools",
+    Geoscience:
+      "Earth materials, environmental testing, instrumentation, data collection, and the systems that shape local communities",
+    "Environmental Science":
+      "environmental monitoring, resource use, sustainability, testing, and science-based decision making",
+    Zoology:
+      "life science, health, sensing, biotechnology, and how STEM tools help researchers understand organisms and systems",
+    Astronomy:
+      "light, optics, sensors, data analysis, instrumentation, and the technologies used to observe distant systems",
+    Engineering:
+      "design, manufacturing, materials, testing, prototyping, automation, and how teams solve technical problems",
+    "Computer Science":
+      "data, automation, software, sensing, cybersecurity, and the digital systems behind modern STEM work",
+    Mathematics:
+      "measurement, modeling, data analysis, quality control, and the quantitative reasoning used in technical workplaces",
+    "Health Science":
+      "biomedical innovation, product testing, patient-centered technology, biotechnology, and healthcare careers",
+    "General STEM":
+      "career exploration, problem solving, workplace tools, and the many ways STEM shows up outside the classroom",
+  };
+  return frames[subject];
+}
+
 function subjectDescription(partner: Partner, subject: Subject) {
   const ideas = matchedIdeas(partner, subject);
   const org = partner.organization;
   const sector = inferSector(partner).toLowerCase();
   const notes = cleanText(partner.notes);
+  const firstNote = notes
+    .split(".")
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)[0];
 
   if (ideas.length > 0) {
-    return `${org} is a strong ${subject.toLowerCase()} connection because its hidden RET relevance tags and notes point to ${ideas.join(
-      ", "
-    )}. Teachers could use this partner to help students connect classroom ideas to real work in ${sector}.`;
+    return `${org} connects naturally to ${subject.toLowerCase()} through ${readableList(
+      ideas
+    )}. A visit, speaker, or virtual conversation could help students see ${classroomFrame(
+      subject
+    )} in the context of real work in ${sector}.`;
   }
 
   if (subject === "General STEM") {
-    return `${org} can support broad STEM career exploration through its work in ${sector}. ${notes
-      .split(".")
-      .filter(Boolean)[0]
-      ?.slice(0, 120) || "Use the contact details to explore tours, talks, mentoring, or project feedback."}.`;
+    return `${org} can support broad STEM career exploration through its work in ${sector}. ${
+      firstNote?.slice(0, 140) ||
+      "Teachers could explore whether a tour, talk, mentoring conversation, or project feedback session would fit their students."
+    }.`;
   }
 
-  return `${org} may be useful for ${subject.toLowerCase()} when framed around real-world STEM careers, workplace tools, and authentic problem solving in ${sector}. Check the contact notes to decide whether a tour, speaker, virtual session, or project feedback request fits.`;
+  return `${org} may be useful for ${subject.toLowerCase()} when framed around ${classroomFrame(
+    subject
+  )}. Teachers can use this lead to explore authentic STEM careers, workplace tools, and student-facing outreach in ${sector}.`;
 }
 
 function splitPeople(value: string) {
