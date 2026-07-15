@@ -41,6 +41,7 @@ test("server-renders the RET partner directory shell", async () => {
   assert.match(html, />Submit</);
   assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
   assert.doesNotMatch(html, /Using live Google Sheet data|Search uses public fields|class="score"/);
+  assert.doesNotMatch(html, /Draft suggestions|Coordinator View|Private\/internal fields/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);
 });
 
@@ -51,15 +52,17 @@ test("keeps starter preview artifacts out of the finished app", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /RET relevance tags/);
+  assert.match(page, /RET Relevance Tags/);
   assert.match(page, /Generate outreach email/);
   assert.match(page, /SHEET_CSV_URL/);
   assert.match(page, /APPS_SCRIPT_JSON_URL/);
   assert.match(page, /partnersFromJson/);
   assert.match(page, /connects naturally to/);
-  assert.match(page, /mailto:bhageman@lps\.org/);
+  assert.match(page, /suggestionDraft/);
+  assert.match(page, /Copy and send this suggestion/);
+  assert.match(page, /bhageman@lps\.org/);
   assert.match(layout, /RET Industry Partner Directory/);
-  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"/);
+  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));

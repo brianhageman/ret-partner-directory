@@ -198,7 +198,6 @@ textarea:focus {
 .partner-card__actions button,
 .email-tool button,
 .suggest-form button,
-.admin-lock button,
 .ghost {
   min-height: 42px;
   border: 1px solid var(--line);
@@ -216,8 +215,7 @@ textarea:focus {
 .chip--active,
 .partner-card__actions button,
 .email-tool button,
-.suggest-form button,
-.admin-lock button {
+.suggest-form button {
   border-color: var(--green);
   background: var(--green);
   color: #fff;
@@ -227,7 +225,6 @@ textarea:focus {
 .partner-card__actions button:hover,
 .email-tool button:hover,
 .suggest-form button:hover,
-.admin-lock button:hover,
 .ghost:hover {
   transform: translateY(-1px);
 }
@@ -378,8 +375,7 @@ textarea:focus {
   padding-top: 14px;
 }
 
-.suggest,
-.admin {
+.suggest {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 24px;
@@ -397,51 +393,6 @@ textarea:focus {
 .suggest-form textarea,
 .suggest-form button {
   grid-column: 1 / -1;
-}
-
-.suggestions {
-  grid-column: 2;
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-}
-
-.admin-lock {
-  display: flex;
-  gap: 12px;
-  align-items: start;
-}
-
-.admin-lock input {
-  max-width: 260px;
-}
-
-.admin-table {
-  overflow: auto;
-  max-height: 520px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-table {
-  width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-  font-size: 0.86rem;
-}
-
-th,
-td {
-  border-bottom: 1px solid var(--line);
-  padding: 10px 12px;
-  text-align: left;
-  vertical-align: top;
-}
-
-th {
-  position: sticky;
-  top: 0;
-  background: #eef3ef;
-  color: var(--ink);
 }
 
 .empty {
@@ -524,17 +475,12 @@ th {
   .hero__content,
   .quickstart,
   .directory,
-  .suggest,
-  .admin {
+  .suggest {
     grid-template-columns: 1fr;
   }
 
   .filters {
     position: static;
-  }
-
-  .suggestions {
-    grid-column: 1;
   }
 }
 
@@ -551,8 +497,7 @@ th {
   .partner-card__main,
   .partner-card__actions,
   .results__bar,
-  .modal__head,
-  .admin-lock {
+  .modal__head {
     align-items: stretch;
     flex-direction: column;
   }

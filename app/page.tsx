@@ -976,10 +976,9 @@ export default function Home() {
   const [sort, setSort] = useState("Best subject match");
   const [selected, setSelected] = useState<Partner | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
+  const [suggestionDraft, setSuggestionDraft] = useState("");
   const [copied, setCopied] = useState(false);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [adminCode, setAdminCode] = useState("");
+  const [suggestionCopied, setSuggestionCopied] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -1073,6 +1072,9 @@ export default function Home() {
     };
     const emailSubject = `RET partner suggestion: ${suggestion.organization}`;
     const emailBody = [
+      "To: bhageman@lps.org",
+      `Subject: ${emailSubject}`,
+      "",
       "A teacher suggested a new partner for the RET Industry Partner Directory.",
       "",
       `Organization: ${suggestion.organization}`,
@@ -1087,10 +1089,8 @@ export default function Home() {
       "Please review this lead and add it to the partner database if it is a good fit.",
     ].join("\n");
 
-    setSuggestions((current) => [suggestion, ...current]);
-    window.location.href = `mailto:bhageman@lps.org?subject=${encodeURIComponent(
-      emailSubject
-    )}&body=${encodeURIComponent(emailBody)}`;
+    setSuggestionDraft(emailBody);
+    setSuggestionCopied(false);
     event.currentTarget.reset();
   }
 
@@ -1258,67 +1258,54 @@ export default function Home() {
           <textarea name="notes" placeholder="Why this could be useful for students" />
           <button type="submit">Submit</button>
         </form>
-        {suggestions.length > 0 && (
-          <div className="suggestions">
-            <h3>Draft suggestions</h3>
-            {suggestions.map((item, index) => (
-              <p key={`${item.organization}-${index}`}>
-                <strong>{item.organization}</strong> - {item.subject} - {item.connection}
-              </p>
-            ))}
-          </div>
-        )}
       </section>
 
-      <section className="admin">
-        <div>
-          <p className="eyebrow">Coordinator View</p>
-          <h2>Private/internal fields</h2>
-          <p>
-            This view keeps contacts and follow-up notes off the teacher cards. Use a hosted access gate for real private deployment.
-          </p>
+      {suggestionDraft && (
+        <div className="modal-backdrop" role="presentation" onClick={() => setSuggestionDraft("")}>
+          <section
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="suggestion-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="modal__head">
+              <div>
+                <p className="eyebrow">Suggest a Partner</p>
+                <h2 id="suggestion-title">Copy and send this suggestion</h2>
+              </div>
+              <button
+                className="ghost"
+                onClick={() => setSuggestionDraft("")}
+                aria-label="Close suggestion email draft"
+              >
+                Close
+              </button>
+            </div>
+            <div className="email-tool">
+              <div>
+                <h3>Email draft for the directory coordinator</h3>
+                <p>
+                  Copy this message into your email and send it to bhageman@lps.org.
+                </p>
+              </div>
+              <textarea
+                value={suggestionDraft}
+                onChange={(event) => setSuggestionDraft(event.target.value)}
+                aria-label="Editable partner suggestion email draft"
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(suggestionDraft);
+                  setSuggestionCopied(true);
+                }}
+              >
+                {suggestionCopied ? "Copied" : "Copy email draft"}
+              </button>
+            </div>
+          </section>
         </div>
-        {!adminOpen ? (
-          <div className="admin-lock">
-            <input
-              value={adminCode}
-              onChange={(event) => setAdminCode(event.target.value)}
-              placeholder="Coordinator passcode"
-              type="password"
-            />
-            <button onClick={() => setAdminOpen(adminCode.trim().toLowerCase() === "ret")}>
-              Unlock preview
-            </button>
-          </div>
-        ) : (
-          <div className="admin-table" role="region" aria-label="Internal partner details">
-            <table>
-              <thead>
-                <tr>
-                  <th>Organization</th>
-                  <th>Contacts</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>RET relevance tags</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {partners.slice(0, 40).map((partner) => (
-                  <tr key={`admin-${partner.id}`}>
-                    <td>{partner.organization}</td>
-                    <td>{partner.contacts || "Not listed"}</td>
-                    <td>{partner.email || "Not listed"}</td>
-                    <td>{partner.status || "Not listed"}</td>
-                    <td>{partner.tags || "Not listed"}</td>
-                    <td>{cleanText(partner.notes) || "Not listed"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      )}
 
       {selected && (
         <div className="modal-backdrop" role="presentation" onClick={() => setSelected(null)}>
