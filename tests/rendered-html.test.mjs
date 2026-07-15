@@ -40,6 +40,7 @@ test("server-renders the RET partner directory shell", async () => {
   assert.match(html, /All suggestions are appreciated/);
   assert.match(html, />Submit</);
   assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
+  assert.doesNotMatch(html, /Using live Google Sheet data|Search uses public fields|class="score"/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);
 });
 
@@ -58,7 +59,7 @@ test("keeps starter preview artifacts out of the finished app", async () => {
   assert.match(page, /connects naturally to/);
   assert.match(page, /mailto:bhageman@lps\.org/);
   assert.match(layout, /RET Industry Partner Directory/);
-  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags/);
+  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));

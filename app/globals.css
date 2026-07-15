@@ -278,14 +278,6 @@ textarea:focus {
   padding: 12px;
 }
 
-.filter-note {
-  border-left: 3px solid var(--green);
-  padding-left: 12px;
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
 .results {
   display: grid;
   gap: 14px;
@@ -353,17 +345,6 @@ textarea:focus {
 .location,
 .description {
   margin-bottom: 0;
-}
-
-.score {
-  display: grid;
-  place-items: center;
-  flex: 0 0 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #edf5f1;
-  color: var(--green-dark);
-  font-weight: 900;
 }
 
 .badge {
@@ -576,7 +557,4 @@ th {
     flex-direction: column;
   }
 
-  .score {
-    width: 46px;
-  }
 }

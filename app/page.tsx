@@ -963,7 +963,6 @@ Thank you for considering it,
 
 export default function Home() {
   const [partners, setPartners] = useState<Partner[]>(seedPartners);
-  const [sourceStatus, setSourceStatus] = useState("Loading live Sheet data...");
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState("All regions");
   const [subject, setSubject] = useState<Subject>("General STEM");
@@ -995,16 +994,9 @@ export default function Home() {
       .then((parsed) => {
         if (!cancelled && parsed.length > 0) {
           setPartners(parsed);
-          setSourceStatus(`Using live Google Sheet data: ${parsed.length} partners`);
         }
       })
-      .catch(() => {
-        if (!cancelled) {
-          setSourceStatus(
-            `Previewing with a ${seedPartners.length}-partner snapshot. Publish the Sheet or provide a web app endpoint for live private data.`
-          );
-        }
-      });
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
@@ -1153,7 +1145,6 @@ export default function Home() {
           <div>
             <p className="eyebrow">Partner Finder</p>
             <h2>Filter by opportunity type</h2>
-            <p>{sourceStatus}</p>
           </div>
           <div className="opportunity-checks" aria-label="Opportunity filters">
             <label className="check">
@@ -1191,9 +1182,6 @@ export default function Home() {
               <option>Speaker available</option>
             </select>
           </label>
-          <div className="filter-note">
-            Search uses public fields plus hidden metadata, including RET relevance tags, notes, contact history, and classroom-connection language.
-          </div>
         </aside>
 
         <div className="results">
@@ -1204,16 +1192,13 @@ export default function Home() {
             <a href="#suggest">Suggest a partner</a>
           </div>
 
-          {filtered.map(({ partner, score }) => (
+          {filtered.map(({ partner }) => (
             <article className="partner-card" key={partner.id}>
               <div className="partner-card__main">
                 <div>
                   <p className="sector">{inferSector(partner)}</p>
                   <h3>{partner.organization}</h3>
                   <p className="location">{partner.location || "Location not listed"}</p>
-                </div>
-                <div className="score" title="Subject, location, and availability match score">
-                  {Math.max(score, 1)}
                 </div>
               </div>
               <p className="description">{subjectDescription(partner, subject)}</p>
