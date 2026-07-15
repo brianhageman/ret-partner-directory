@@ -446,6 +446,10 @@ function readableList(items: string[]) {
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
 }
 
+function sentenceCase(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function classroomFrame(subject: Subject) {
   const frames: Record<Subject, string> = {
     Physics:
@@ -486,7 +490,7 @@ function availableOpportunityPhrase(partner: Partner) {
   ].filter(Boolean);
 
   if (options.length > 0) {
-    return `${readableList(options)} could help students see`;
+    return `${sentenceCase(readableList(options))} could help students see`;
   }
 
   return "An outreach connection could help students explore";

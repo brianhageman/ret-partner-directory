@@ -26,6 +26,7 @@ test("keeps the teacher-facing RET partner directory shell in place", async () =
   assert.match(page, /partnersFromJson/);
   assert.match(page, /connects naturally to/);
   assert.match(page, /availableOpportunityPhrase/);
+  assert.match(page, /sentenceCase\(readableList\(options\)\)/);
   assert.match(page, /An outreach connection could help students explore/);
   assert.match(page, /suggestionDraft/);
   assert.match(page, /Copy and send this suggestion/);
