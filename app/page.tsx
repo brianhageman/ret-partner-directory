@@ -1079,7 +1079,26 @@ export default function Home() {
       subject: String(form.get("subject") || "General STEM") as Subject,
       notes: String(form.get("notes") || ""),
     };
+    const emailSubject = `RET partner suggestion: ${suggestion.organization}`;
+    const emailBody = [
+      "A teacher suggested a new partner for the RET Industry Partner Directory.",
+      "",
+      `Organization: ${suggestion.organization}`,
+      `Website: ${suggestion.website || "Not provided"}`,
+      `Location: ${suggestion.location || "Not provided"}`,
+      `Suggested connection: ${suggestion.connection || "Not provided"}`,
+      `Relevant content area: ${suggestion.subject}`,
+      "",
+      "Notes:",
+      suggestion.notes || "Not provided",
+      "",
+      "Please review this lead and add it to the partner database if it is a good fit.",
+    ].join("\n");
+
     setSuggestions((current) => [suggestion, ...current]);
+    window.location.href = `mailto:bhageman@lps.org?subject=${encodeURIComponent(
+      emailSubject
+    )}&body=${encodeURIComponent(emailBody)}`;
     event.currentTarget.reset();
   }
 
@@ -1236,9 +1255,9 @@ export default function Home() {
       <section className="suggest" id="suggest">
         <div>
           <p className="eyebrow">Suggest a Partner</p>
-          <h2>Add a lead for the coordinator list</h2>
+          <h2>Add a lead for the list.</h2>
           <p>
-            Teachers can draft a suggested organization without touching the source spreadsheet. In a production version, this form can be connected to a Google Form or Apps Script endpoint.
+            Know an organization that could support students through a tour, speaker, virtual visit, mentoring, or project feedback? Submit the suggestion and it will open an email to the directory coordinator for review before anything is added to the database.
           </p>
         </div>
         <form onSubmit={handleSuggestion} className="suggest-form">
@@ -1252,7 +1271,7 @@ export default function Home() {
           </select>
           <input name="connection" placeholder="Suggested connection, e.g. guest speaker" />
           <textarea name="notes" placeholder="Why this could be useful for students" />
-          <button type="submit">Save suggestion locally</button>
+          <button type="submit">Submit</button>
         </form>
         {suggestions.length > 0 && (
           <div className="suggestions">

@@ -36,6 +36,8 @@ test("server-renders the RET partner directory shell", async () => {
   assert.match(html, /Partner Finder/);
   assert.match(html, /Filter by opportunity type/);
   assert.match(html, /Suggest a Partner/);
+  assert.match(html, /Add a lead for the list/);
+  assert.match(html, />Submit</);
   assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);
 });
@@ -53,6 +55,7 @@ test("keeps starter preview artifacts out of the finished app", async () => {
   assert.match(page, /APPS_SCRIPT_JSON_URL/);
   assert.match(page, /partnersFromJson/);
   assert.match(page, /connects naturally to/);
+  assert.match(page, /mailto:bhageman@lps\.org/);
   assert.match(layout, /RET Industry Partner Directory/);
   assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
