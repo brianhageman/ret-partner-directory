@@ -46,6 +46,7 @@ type Suggestion = {
 
 const SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/1dKMkOsVlfuLRnw4qHnT757E1tQa8Qfm3m-Srh6iv-JM/gviz/tq?tqx=out:csv&gid=1188711968";
+const APPS_SCRIPT_JSON_URL = "";
 
 const subjects: Subject[] = [
   "Physics",
@@ -707,6 +708,49 @@ function partnersFromRows(rows: string[][]): Partner[] {
     .filter((partner) => partner.organization.trim());
 }
 
+function partnerFromRecord(record: Record<string, unknown>, index: number): Partner {
+  const value = (...keys: string[]) => {
+    for (const key of keys) {
+      const found = record[key];
+      if (found !== undefined && found !== null) return String(found);
+    }
+    return "";
+  };
+
+  return {
+    id: value("id") || `json-${index + 1}-${value("Organization Name", "organization")}`,
+    organization: value("Organization Name", "organization"),
+    sector: value("Industry / Sector", "sector"),
+    location: value("Location / Address", "location"),
+    website: value("Website", "website"),
+    contacts: value("Primary Contact", "contacts"),
+    contactRole: value("Contact Role / Title", "contactRole"),
+    email: value("Email", "email"),
+    phone: value("Phone", "phone"),
+    tags: value("RET Relevance Tags", "tags"),
+    tour: value("Tour Availability", "tour"),
+    speaker: value("Guest Speaker Availability", "speaker"),
+    virtual: value("Virtual Option", "virtual"),
+    status: value("Status", "status"),
+    notes: value("Notes", "notes"),
+  };
+}
+
+function partnersFromJson(payload: unknown): Partner[] {
+  const records = Array.isArray(payload)
+    ? payload
+    : Array.isArray((payload as { partners?: unknown }).partners)
+      ? (payload as { partners: unknown[] }).partners
+      : [];
+
+  return records
+    .filter((record): record is Record<string, unknown> => {
+      return Boolean(record) && typeof record === "object" && !Array.isArray(record);
+    })
+    .map(partnerFromRecord)
+    .filter((partner) => partner.organization.trim());
+}
+
 function cleanText(value: string) {
   return value.replace(/STARLAB/g, "RET").trim();
 }
@@ -940,13 +984,15 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(SHEET_CSV_URL)
-      .then((response) => {
-        if (!response.ok) throw new Error("Sheet export was not available.");
-        return response.text();
+    const liveSource = APPS_SCRIPT_JSON_URL || SHEET_CSV_URL;
+
+    fetch(liveSource)
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Sheet data was not available.");
+        if (APPS_SCRIPT_JSON_URL) return partnersFromJson(await response.json());
+        return partnersFromRows(parseCsv(await response.text()));
       })
-      .then((csv) => {
-        const parsed = partnersFromRows(parseCsv(csv));
+      .then((parsed) => {
         if (!cancelled && parsed.length > 0) {
           setPartners(parsed);
           setSourceStatus(`Using live Google Sheet data: ${parsed.length} partners`);
