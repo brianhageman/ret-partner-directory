@@ -2,56 +2,23 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
-}
-
-test("server-renders the RET partner directory shell", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, /<title>RET Industry Partner Directory<\/title>/i);
-  assert.match(html, /RET Industry Partner Directory/);
-  assert.match(html, /Connect your classroom to real-world STEM/);
-  assert.match(html, /Content Area/);
-  assert.match(html, /Partner Finder/);
-  assert.match(html, /Filter by opportunity type/);
-  assert.match(html, /Suggest a Partner/);
-  assert.match(html, /Want to add a lead to the list/);
-  assert.match(html, /All suggestions are appreciated/);
-  assert.match(html, />Submit</);
-  assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
-  assert.doesNotMatch(html, /Using live Google Sheet data|Search uses public fields|class="score"/);
-  assert.doesNotMatch(html, /Draft suggestions|Coordinator View|Private\/internal fields/);
-  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);
-});
-
-test("keeps starter preview artifacts out of the finished app", async () => {
+test("keeps the teacher-facing RET partner directory shell in place", async () => {
   const [page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
+  assert.match(layout, /RET Industry Partner Directory/);
+  assert.match(page, /RET Industry Partner Directory/);
+  assert.match(page, /Connect your classroom to real-world STEM/);
+  assert.match(page, /Content Area/);
+  assert.match(page, /Partner Finder/);
+  assert.match(page, /Filter by opportunity type/);
+  assert.match(page, /Suggest a Partner/);
+  assert.match(page, /Want to add a lead to the list/);
+  assert.match(page, /All suggestions are appreciated/);
+  assert.match(page, />Submit</);
   assert.match(page, /RET Relevance Tags/);
   assert.match(page, /Generate outreach email/);
   assert.match(page, /SHEET_CSV_URL/);
@@ -61,9 +28,12 @@ test("keeps starter preview artifacts out of the finished app", async () => {
   assert.match(page, /suggestionDraft/);
   assert.match(page, /Copy and send this suggestion/);
   assert.match(page, /bhageman@lps\.org/);
-  assert.match(layout, /RET Industry Partner Directory/);
-  assert.doesNotMatch(page, /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:/);
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  assert.match(packageJson, /"build": "next build --webpack"/);
+  assert.doesNotMatch(
+    page,
+    /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:|Virtual friendly|Recommended matches|Teaching subject|Using live Google Sheet data|Search uses public fields|class="score"|Private\/internal fields/,
+  );
+  assert.doesNotMatch(packageJson, /react-loading-skeleton|vinext|wrangler/);
 
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));
 });
