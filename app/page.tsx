@@ -66,7 +66,7 @@ const subjects: Subject[] = [
 
 const regions = [
   "All regions",
-  "Atlanta / Georgia",
+  "Georgia / Atlanta",
   "Minnesota / Twin Cities",
   "Nebraska / Lincoln-Omaha",
 ];
@@ -402,7 +402,7 @@ function inferSector(partner: Partner) {
 function regionScore(partner: Partner, region: string) {
   const location = partner.location.toLowerCase();
   if (region === "All regions") return 1;
-  if (region === "Atlanta / Georgia")
+  if (region === "Georgia / Atlanta")
     return location.includes("ga") || location.includes("atlanta") ? 5 : 0;
   if (region === "Minnesota / Twin Cities")
     return location.includes("mn") ||
