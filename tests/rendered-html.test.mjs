@@ -36,7 +36,8 @@ test("server-renders the RET partner directory shell", async () => {
   assert.match(html, /Partner Finder/);
   assert.match(html, /Filter by opportunity type/);
   assert.match(html, /Suggest a Partner/);
-  assert.match(html, /Add a lead for the list/);
+  assert.match(html, /Want to add a lead to the list/);
+  assert.match(html, /All suggestions are appreciated/);
   assert.match(html, />Submit</);
   assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);

@@ -1255,9 +1255,9 @@ export default function Home() {
       <section className="suggest" id="suggest">
         <div>
           <p className="eyebrow">Suggest a Partner</p>
-          <h2>Add a lead for the list.</h2>
+          <h2>Want to add a lead to the list?</h2>
           <p>
-            Know an organization that could support students through a tour, speaker, virtual visit, mentoring, or project feedback? Submit the suggestion and it will open an email to the directory coordinator for review before anything is added to the database.
+            Know an organization that could support students through a tour, speaker, or virtual visit? Submit the suggestion and it will open an email to the directory coordinator for review. All suggestions are appreciated!
           </p>
         </div>
         <form onSubmit={handleSuggestion} className="suggest-form">
