@@ -25,6 +25,8 @@ test("keeps the teacher-facing RET partner directory shell in place", async () =
   assert.match(page, /APPS_SCRIPT_JSON_URL/);
   assert.match(page, /partnersFromJson/);
   assert.match(page, /connects naturally to/);
+  assert.match(page, /availableOpportunityPhrase/);
+  assert.match(page, /An outreach connection could help students explore/);
   assert.match(page, /suggestionDraft/);
   assert.match(page, /Copy and send this suggestion/);
   assert.match(page, /bhageman@lps\.org/);
@@ -34,7 +36,7 @@ test("keeps the teacher-facing RET partner directory shell in place", async () =
   assert.match(packageJson, /"build": "next build --webpack"/);
   assert.doesNotMatch(
     page,
-    /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:|Virtual friendly|Recommended matches|Teaching subject|Using live Google Sheet data|Search uses public fields|class="score"|Private\/internal fields/,
+    /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:|Virtual friendly|Recommended matches|Teaching subject|Using live Google Sheet data|Search uses public fields|class="score"|Private\/internal fields|A visit, speaker, or virtual conversation/,
   );
   assert.doesNotMatch(packageJson, /react-loading-skeleton|vinext|wrangler/);
 

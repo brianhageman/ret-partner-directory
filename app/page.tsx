@@ -478,6 +478,20 @@ function classroomFrame(subject: Subject) {
   return frames[subject];
 }
 
+function availableOpportunityPhrase(partner: Partner) {
+  const options = [
+    isPositive(partner.tour) ? "a student tour" : "",
+    isPositive(partner.speaker) ? "a guest speaker visit" : "",
+    isPositive(partner.virtual) ? "a virtual conversation" : "",
+  ].filter(Boolean);
+
+  if (options.length > 0) {
+    return `${readableList(options)} could help students see`;
+  }
+
+  return "An outreach connection could help students explore";
+}
+
 function subjectDescription(partner: Partner, subject: Subject) {
   const ideas = matchedIdeas(partner, subject);
   const org = partner.organization;
@@ -491,7 +505,7 @@ function subjectDescription(partner: Partner, subject: Subject) {
   if (ideas.length > 0) {
     return `${org} connects naturally to ${subject.toLowerCase()} through ${readableList(
       ideas
-    )}. A visit, speaker, or virtual conversation could help students see ${classroomFrame(
+    )}. ${availableOpportunityPhrase(partner)} ${classroomFrame(
       subject
     )} in the context of real work in ${sector}.`;
   }
@@ -505,7 +519,7 @@ function subjectDescription(partner: Partner, subject: Subject) {
 
   return `${org} may be useful for ${subject.toLowerCase()} when framed around ${classroomFrame(
     subject
-  )}. Teachers can use this lead to explore authentic STEM careers, workplace tools, and student-facing outreach in ${sector}.`;
+  )}. Teachers can use this lead to explore authentic STEM careers, workplace tools, and appropriate outreach possibilities in ${sector}.`;
 }
 
 function splitPeople(value: string) {
