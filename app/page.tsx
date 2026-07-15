@@ -68,7 +68,6 @@ const regions = [
   "Atlanta / Georgia",
   "Minnesota / Twin Cities",
   "Nebraska / Lincoln-Omaha",
-  "Virtual friendly",
 ];
 
 const subjectKeywords: Record<Subject, string[]> = {
@@ -762,7 +761,6 @@ function inferSector(partner: Partner) {
 function regionScore(partner: Partner, region: string) {
   const location = partner.location.toLowerCase();
   if (region === "All regions") return 1;
-  if (region === "Virtual friendly") return isPositive(partner.virtual) ? 4 : 0;
   if (region === "Atlanta / Georgia")
     return location.includes("ga") || location.includes("atlanta") ? 5 : 0;
   if (region === "Minnesota / Twin Cities")
@@ -883,7 +881,7 @@ export default function Home() {
     speaker: false,
     virtual: false,
     mentor: false,
-    best: true,
+    best: false,
   });
   const [sort, setSort] = useState("Best subject match");
   const [selected, setSelected] = useState<Partner | null>(null);
@@ -923,16 +921,6 @@ export default function Home() {
     if (selected) setEmailDraft(generateEmail(selected, subject, filters));
     setCopied(false);
   }, [selected, subject, filters]);
-
-  const stats = useMemo(
-    () => ({
-      partners: partners.length,
-      tours: partners.filter((partner) => isPositive(partner.tour)).length,
-      speakers: partners.filter((partner) => isPositive(partner.speaker)).length,
-      virtual: partners.filter((partner) => isPositive(partner.virtual)).length,
-    }),
-    [partners]
-  );
 
   const filtered = useMemo(() => {
     const text = query.trim().toLowerCase();
@@ -1008,28 +996,10 @@ export default function Home() {
         <div className="hero__content">
           <div>
             <p className="eyebrow">RET Industry Partner Directory</p>
-            <h1>Find local and virtual STEM partners without opening the spreadsheet.</h1>
+            <h1>Connect your classroom to real-world STEM.</h1>
             <p className="hero__copy">
-              A teacher-facing finder for RET participants, coordinators, and school colleagues looking for tours, speakers, virtual visits, mentors, and project feedback.
+              This directory helps teachers find local and virtual industry partners who may be able to support classroom learning through tours, guest speakers, virtual visits, career connections, mentoring, and project feedback. Use it to discover organizations connected to the subjects you teach and to start building authentic STEM experiences for your students.
             </p>
-          </div>
-          <div className="hero__panel" aria-label="Directory snapshot">
-            <div>
-              <strong>{stats.partners}</strong>
-              <span>partners</span>
-            </div>
-            <div>
-              <strong>{stats.tours}</strong>
-              <span>tour leads</span>
-            </div>
-            <div>
-              <strong>{stats.speakers}</strong>
-              <span>speaker leads</span>
-            </div>
-            <div>
-              <strong>{stats.virtual}</strong>
-              <span>virtual-ready</span>
-            </div>
           </div>
         </div>
         <div className="quickstart" aria-label="Start a teacher search">
@@ -1042,7 +1012,7 @@ export default function Home() {
             </select>
           </label>
           <label>
-            Teaching subject
+            Content Area
             <select
               value={subject}
               onChange={(event) => setSubject(event.target.value as Subject)}
@@ -1052,32 +1022,17 @@ export default function Home() {
               ))}
             </select>
           </label>
-          <div className="quick-buttons">
-            <button
-              className={filters.tour ? "chip chip--active" : "chip"}
-              onClick={() => toggleFilter("tour")}
-            >
-              Find a tour
-            </button>
-            <button
-              className={filters.speaker ? "chip chip--active" : "chip"}
-              onClick={() => toggleFilter("speaker")}
-            >
-              Find a guest speaker
-            </button>
-            <button
-              className={filters.virtual ? "chip chip--active" : "chip"}
-              onClick={() => toggleFilter("virtual")}
-            >
-              Find a virtual speaker
-            </button>
-            <button
-              className={filters.mentor ? "chip chip--active" : "chip"}
-              onClick={() => toggleFilter("mentor")}
-            >
-              Mentor or feedback
-            </button>
-          </div>
+          <label>
+            Search
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Name, industry, city, website, topic..."
+            />
+          </label>
+          <a className="search-button" href="#directory">
+            Search
+          </a>
         </div>
       </section>
 
@@ -1085,17 +1040,35 @@ export default function Home() {
         <aside className="filters" aria-label="Partner filters">
           <div>
             <p className="eyebrow">Partner Finder</p>
-            <h2>Recommended matches</h2>
+            <h2>Filter by opportunity type</h2>
             <p>{sourceStatus}</p>
           </div>
-          <label>
-            Search partners
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Name, industry, city, website, topic..."
-            />
-          </label>
+          <div className="opportunity-checks" aria-label="Opportunity filters">
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={filters.tour}
+                onChange={() => toggleFilter("tour")}
+              />
+              Tour
+            </label>
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={filters.speaker}
+                onChange={() => toggleFilter("speaker")}
+              />
+              Guest Speaker
+            </label>
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={filters.virtual}
+                onChange={() => toggleFilter("virtual")}
+              />
+              Virtual
+            </label>
+          </div>
           <label>
             Sort
             <select value={sort} onChange={(event) => setSort(event.target.value)}>
@@ -1105,14 +1078,6 @@ export default function Home() {
               <option>Tour available</option>
               <option>Speaker available</option>
             </select>
-          </label>
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={filters.best}
-              onChange={() => toggleFilter("best")}
-            />
-            Best matches for my subject
           </label>
           <div className="filter-note">
             Search uses public fields plus hidden metadata, including RET relevance tags, notes, contact history, and classroom-connection language.
@@ -1168,7 +1133,7 @@ export default function Home() {
             <div className="empty">
               <h3>No exact matches yet</h3>
               <p>
-                Try turning off "best matches," clearing a quick filter, or choosing "Virtual friendly" to include farther-away partners.
+                Try clearing an opportunity filter, broadening your search, or choosing "All regions" to include more partners.
               </p>
             </div>
           )}

@@ -31,9 +31,12 @@ test("server-renders the RET partner directory shell", async () => {
   const html = await response.text();
   assert.match(html, /<title>RET Industry Partner Directory<\/title>/i);
   assert.match(html, /RET Industry Partner Directory/);
-  assert.match(html, /Find local and virtual STEM partners/);
+  assert.match(html, /Connect your classroom to real-world STEM/);
+  assert.match(html, /Content Area/);
   assert.match(html, /Partner Finder/);
+  assert.match(html, /Filter by opportunity type/);
   assert.match(html, /Suggest a Partner/);
+  assert.doesNotMatch(html, /Virtual friendly|Recommended matches|Teaching subject/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/);
 });
 
