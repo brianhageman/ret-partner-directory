@@ -446,6 +446,13 @@ function readableList(items: string[]) {
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
 }
 
+function readableOptionList(items: string[]) {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} or ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, or ${items[items.length - 1]}`;
+}
+
 function sentenceCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -490,7 +497,7 @@ function availableOpportunityPhrase(partner: Partner) {
   ].filter(Boolean);
 
   if (options.length > 0) {
-    return `${sentenceCase(readableList(options))} could help students see`;
+    return `${sentenceCase(readableOptionList(options))} could help students see`;
   }
 
   return "An outreach connection could help students explore";
