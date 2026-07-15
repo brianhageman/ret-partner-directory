@@ -620,9 +620,14 @@ export default function Home() {
         return { partner, score, subjectRank, localRank };
       })
       .filter(({ partner, subjectRank, localRank }) => {
+        const outOfRegion = region !== "All regions" && localRank === 0;
         if (text && !searchable(partner).includes(text)) return false;
-        if (region !== "All regions" && localRank === 0 && !isPositive(partner.virtual))
-          return false;
+        if (outOfRegion) {
+          if (!isPositive(partner.virtual)) return false;
+          if ((filters.tour || filters.speaker || filters.mentor) && !filters.virtual) {
+            return false;
+          }
+        }
         if (filters.best && subjectRank === 0 && subject !== "General STEM")
           return false;
         if (filters.tour && !isPositive(partner.tour)) return false;

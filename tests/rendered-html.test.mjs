@@ -28,6 +28,9 @@ test("keeps the teacher-facing RET partner directory shell in place", async () =
   assert.match(page, /suggestionDraft/);
   assert.match(page, /Copy and send this suggestion/);
   assert.match(page, /bhageman@lps\.org/);
+  assert.match(page, /const outOfRegion = region !== "All regions" && localRank === 0/);
+  assert.match(page, /if \(!isPositive\(partner\.virtual\)\) return false/);
+  assert.match(page, /filters\.tour \|\| filters\.speaker \|\| filters\.mentor/);
   assert.match(packageJson, /"build": "next build --webpack"/);
   assert.doesNotMatch(
     page,
