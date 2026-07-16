@@ -729,7 +729,7 @@ export default function Home() {
             <p className="eyebrow">RET Industry Partner Directory</p>
             <h1>Connect your classroom to real-world STEM.</h1>
             <p className="hero__copy">
-              This directory helps teachers find local and virtual industry partners who may be able to support classroom learning through tours, guest speakers, virtual visits, career connections, mentoring, and project feedback. Use it to discover organizations connected to the subjects you teach and to start building authentic STEM experiences for your students.
+              This directory is intended to help teachers find local and virtual industry partners who may be able to support classroom learning through tours, guest speakers, virtual visits, and exploring career connections. Use it to discover organizations connected to the subjects you teach and to start building authentic STEM experiences for your students.
             </p>
           </div>
         </div>
