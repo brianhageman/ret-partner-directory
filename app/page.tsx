@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { REGIONS, Region, regionScore } from "./geography";
 
 type Partner = {
   id: string;
@@ -62,13 +63,6 @@ const subjects: Subject[] = [
   "Mathematics",
   "Health Science",
   "General STEM",
-];
-
-const regions = [
-  "All regions",
-  "Georgia / Atlanta",
-  "Minnesota / Twin Cities",
-  "Nebraska / Lincoln-Omaha",
 ];
 
 const subjectKeywords: Record<Subject, string[]> = {
@@ -399,28 +393,6 @@ function inferSector(partner: Partner) {
   return "STEM Partner";
 }
 
-function regionScore(partner: Partner, region: string) {
-  const location = partner.location.toLowerCase();
-  if (region === "All regions") return 1;
-  if (region === "Georgia / Atlanta")
-    return location.includes("ga") || location.includes("atlanta") ? 5 : 0;
-  if (region === "Minnesota / Twin Cities")
-    return location.includes("mn") ||
-      location.includes("minneapolis") ||
-      location.includes("bloomington") ||
-      location.includes("chaska") ||
-      location.includes("eden prairie")
-      ? 5
-      : 0;
-  if (region === "Nebraska / Lincoln-Omaha")
-    return location.includes("ne") ||
-      location.includes("lincoln") ||
-      location.includes("omaha")
-      ? 5
-      : 0;
-  return 0;
-}
-
 function subjectScore(partner: Partner, subject: Subject) {
   const haystack = searchable(partner);
   const exactSubject = subject.toLowerCase();
@@ -586,7 +558,7 @@ Thank you for considering it,
 export default function Home() {
   const [partners, setPartners] = useState<Partner[]>(seedPartners);
   const [query, setQuery] = useState("");
-  const [region, setRegion] = useState("All regions");
+  const [region, setRegion] = useState<Region>("All regions");
   const [subject, setSubject] = useState<Subject>("General STEM");
   const [filters, setFilters] = useState({
     tour: false,
@@ -634,7 +606,7 @@ export default function Home() {
     return partners
       .map((partner) => {
         const subjectRank = subjectScore(partner, subject);
-        const localRank = regionScore(partner, region);
+        const localRank = regionScore(partner.location, region);
         const virtualRank = isPositive(partner.virtual) ? 2 : 0;
         const score =
           subjectRank * 8 +
@@ -676,6 +648,49 @@ export default function Home() {
         return b.score - a.score;
       });
   }, [partners, query, region, subject, filters, sort]);
+
+  const localResults = filtered.filter(
+    ({ localRank }) => region === "All regions" || localRank > 0
+  );
+  const additionalVirtualResults = filtered.filter(
+    ({ localRank }) => region !== "All regions" && localRank === 0
+  );
+
+  function renderPartnerCard(partner: Partner) {
+    return (
+      <article className="partner-card" key={partner.id}>
+        <div className="partner-card__main">
+          <div>
+            <p className="sector">{inferSector(partner)}</p>
+            <h3>{partner.organization}</h3>
+            <p className="location">{partner.location || "Location not listed"}</p>
+          </div>
+        </div>
+        <p className="description">{subjectDescription(partner, subject)}</p>
+        <div className="badges" aria-label="Opportunity availability">
+          <span className={`badge badge--${availabilityValue(partner.tour).toLowerCase()}`}>
+            Tour: {availabilityValue(partner.tour)}
+          </span>
+          <span className={`badge badge--${availabilityValue(partner.speaker).toLowerCase()}`}>
+            Speaker: {availabilityValue(partner.speaker)}
+          </span>
+          <span className={`badge badge--${availabilityValue(partner.virtual).toLowerCase()}`}>
+            Virtual: {availabilityValue(partner.virtual)}
+          </span>
+        </div>
+        <div className="partner-card__actions">
+          {partner.website ? (
+            <a href={partner.website} target="_blank" rel="noreferrer">
+              Website
+            </a>
+          ) : (
+            <span>No website listed</span>
+          )}
+          <button onClick={() => openContact(partner)}>Contact</button>
+        </div>
+      </article>
+    );
+  }
 
   function toggleFilter(key: keyof typeof filters) {
     setFilters((current) => ({ ...current, [key]: !current[key] }));
@@ -736,8 +751,11 @@ export default function Home() {
         <div className="quickstart" aria-label="Start a teacher search">
           <label>
             Region
-            <select value={region} onChange={(event) => setRegion(event.target.value)}>
-              {regions.map((item) => (
+            <select
+              value={region}
+              onChange={(event) => setRegion(event.target.value as Region)}
+            >
+              {REGIONS.map((item) => (
                 <option key={item}>{item}</option>
               ))}
             </select>
@@ -814,46 +832,27 @@ export default function Home() {
         <div className="results">
           <div className="results__bar">
             <div>
-              <strong>{filtered.length}</strong> matches for <strong>{subject}</strong>
+              <strong>{localResults.length}</strong> regional matches for <strong>{subject}</strong>
             </div>
             <a href="#suggest">Suggest a partner</a>
           </div>
 
-          {filtered.map(({ partner }) => (
-            <article className="partner-card" key={partner.id}>
-              <div className="partner-card__main">
-                <div>
-                  <p className="sector">{inferSector(partner)}</p>
-                  <h3>{partner.organization}</h3>
-                  <p className="location">{partner.location || "Location not listed"}</p>
-                </div>
-              </div>
-              <p className="description">{subjectDescription(partner, subject)}</p>
-              <div className="badges" aria-label="Opportunity availability">
-                <span className={`badge badge--${availabilityValue(partner.tour).toLowerCase()}`}>
-                  Tour: {availabilityValue(partner.tour)}
-                </span>
-                <span className={`badge badge--${availabilityValue(partner.speaker).toLowerCase()}`}>
-                  Speaker: {availabilityValue(partner.speaker)}
-                </span>
-                <span className={`badge badge--${availabilityValue(partner.virtual).toLowerCase()}`}>
-                  Virtual: {availabilityValue(partner.virtual)}
-                </span>
-              </div>
-              <div className="partner-card__actions">
-                {partner.website ? (
-                  <a href={partner.website} target="_blank" rel="noreferrer">
-                    Website
-                  </a>
-                ) : (
-                  <span>No website listed</span>
-                )}
-                <button onClick={() => openContact(partner)}>Contact</button>
-              </div>
-            </article>
-          ))}
+          {localResults.map(({ partner }) => renderPartnerCard(partner))}
 
-          {filtered.length === 0 && (
+          {additionalVirtualResults.length > 0 && (
+            <section className="virtual-results" aria-labelledby="virtual-results-title">
+              <div className="results__bar">
+                <div>
+                  <strong id="virtual-results-title">Additional Virtual Opportunities</strong>
+                  <p>Organizations outside {region} that offer a virtual option.</p>
+                </div>
+                <span>{additionalVirtualResults.length} matches</span>
+              </div>
+              {additionalVirtualResults.map(({ partner }) => renderPartnerCard(partner))}
+            </section>
+          )}
+
+          {localResults.length === 0 && additionalVirtualResults.length === 0 && (
             <div className="empty">
               <h3>No exact matches yet</h3>
               <p>
