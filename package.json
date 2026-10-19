@@ -6,9 +6,9 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --webpack",
-    "start": "next start",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview",
     "test": "npm run build && node --experimental-strip-types --test tests/rendered-html.test.mjs tests/geography.test.ts",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },

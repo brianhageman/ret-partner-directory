@@ -38,7 +38,7 @@ test("keeps the teacher-facing RET partner directory shell in place", async () =
   assert.match(page, /additionalVirtualResults\.map/);
   assert.match(page, /if \(!isPositive\(partner\.virtual\)\) return false/);
   assert.match(page, /filters\.tour \|\| filters\.speaker \|\| filters\.mentor/);
-  assert.match(packageJson, /"build": "next build --webpack"/);
+  assert.match(packageJson, /"build": "vite build"/);
   assert.doesNotMatch(
     page,
     /SkeletonPreview|STARLAB relevance tags|codex-preview|hidden RET relevance tags|sourceStatus|className="score"|Draft suggestions|Coordinator View|adminOpen|mailto:|Virtual friendly|Recommended matches|Teaching subject|Using live Google Sheet data|Search uses public fields|class="score"|Private\/internal fields|A visit, speaker, or virtual conversation/,
